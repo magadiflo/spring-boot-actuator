@@ -463,3 +463,67 @@ $  curl -v http://localhost:8080/actuator/info | jq
   }
 }
 ````
+
+Podemos agregar nuevas configuraciones para ver más información
+
+````yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+    build:
+      enabled: true
+    git:
+      enabled: true
+      mode: full
+    java:
+      enabled: true
+    os:
+      enabled: true
+````
+
+````bash
+$  curl -v http://localhost:8080/actuator/info | jq
+<
+< HTTP/1.1 200
+< Content-Type: application/vnd.spring-boot.actuator.v3+json
+< Transfer-Encoding: chunked
+< Date: Thu, 02 May 2024 01:23:58 GMT
+<
+{
+  "app": {
+    "name": "spring-boot-actuator",
+    "description": "Event Managament Application",
+    "version": "1.0.0",
+    "author": "Martin",
+    "docs": "http://magadiflo.dev"
+  },
+  "java": {
+    "version": "21.0.1",
+    "vendor": {
+      "name": "Oracle Corporation"
+    },
+    "runtime": {
+      "name": "Java(TM) SE Runtime Environment",
+      "version": "21.0.1+12-LTS-29"
+    },
+    "jvm": {
+      "name": "Java HotSpot(TM) 64-Bit Server VM",
+      "vendor": "Oracle Corporation",
+      "version": "21.0.1+12-LTS-29"
+    }
+  },
+  "os": {
+    "name": "Windows 11",
+    "version": "10.0",
+    "arch": "amd64"
+  }
+}
+````
