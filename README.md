@@ -574,3 +574,104 @@ $ curl -v http://localhost:8080/actuator/beans | jq
     }
 }
 ````
+
+Y si vamos al endpoint `/mappings` podemos ver información del endpoint de nuestro controlador:
+
+````bash
+curl -v http://localhost:8080/actuator/mappings | jq
+>
+< HTTP/1.1 200
+< Content-Type: application/vnd.spring-boot.actuator.v3+json
+< Transfer-Encoding: chunked
+< Date: Thu, 02 May 2024 01:34:02 GMT
+<
+{
+    "contexts": {
+        "spring-boot-actuator": {
+            "mappings": {
+                "dispatcherServlets": {
+                    "dispatcherServlet": [
+                        {...},
+                        {
+                            "handler": "dev.magadiflo.actuator.app.HomeController#home()",
+                            "predicate": "{GET [/ || ]}",
+                            "details": {
+                                "handlerMethod": {
+                                    "className": "dev.magadiflo.actuator.app.HomeController",
+                                    "name": "home",
+                                    "descriptor": "()Ljava/lang/String;"
+                                },
+                                "requestMappingConditions": {
+                                    "consumes": [],
+                                    "headers": [],
+                                    "methods": [
+                                        "GET"
+                                    ],
+                                    "params": [],
+                                    "patterns": [
+                                        "",
+                                        "/"
+                                    ],
+                                    "produces": []
+                                }
+                            }
+                        },
+                        {...}
+                    ]
+                },
+                "servletFilters": [
+                    {
+                        "servletNameMappings": [],
+                        "urlPatternMappings": [
+                            "/*"
+                        ],
+                        "name": "requestContextFilter",
+                        "className": "org.springframework.boot.web.servlet.filter.OrderedRequestContextFilter"
+                    },
+                    {
+                        "servletNameMappings": [],
+                        "urlPatternMappings": [
+                            "/*"
+                        ],
+                        "name": "webMvcObservationFilter",
+                        "className": "org.springframework.web.filter.ServerHttpObservationFilter"
+                    },
+                    {
+                        "servletNameMappings": [],
+                        "urlPatternMappings": [
+                            "/*"
+                        ],
+                        "name": "Tomcat WebSocket (JSR356) Filter",
+                        "className": "org.apache.tomcat.websocket.server.WsFilter"
+                    },
+                    {
+                        "servletNameMappings": [],
+                        "urlPatternMappings": [
+                            "/*"
+                        ],
+                        "name": "characterEncodingFilter",
+                        "className": "org.springframework.boot.web.servlet.filter.OrderedCharacterEncodingFilter"
+                    },
+                    {
+                        "servletNameMappings": [],
+                        "urlPatternMappings": [
+                            "/*"
+                        ],
+                        "name": "formContentFilter",
+                        "className": "org.springframework.boot.web.servlet.filter.OrderedFormContentFilter"
+                    }
+                ],
+                "servlets": [
+                    {
+                        "mappings": [
+                            "/"
+                        ],
+                        "name": "dispatcherServlet",
+                        "className": "org.springframework.web.servlet.DispatcherServlet"
+                    }
+                ]
+            }
+        }
+    }
+}
+````
