@@ -421,3 +421,45 @@ $ curl -v http://localhost:8080/actuator/health | jq
   }
 }
 ````
+
+## Agregando configuraciones al endpoint /info
+
+Agregamos la siguiente configuración en el `application.yml`:
+
+````yaml
+management:
+  # another configuration
+  #
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: spring-boot-actuator
+    description: Event Managament Application
+    version: 1.0.0
+    author: Martin
+    docs: http://magadiflo.dev
+````
+
+Accedemos al endpoint `/info` y veremos que se muestra nuestra información personalizada:
+
+````bash
+$  curl -v http://localhost:8080/actuator/info | jq
+>
+< HTTP/1.1 200
+< Content-Type: application/vnd.spring-boot.actuator.v3+json
+< Transfer-Encoding: chunked
+< Date: Thu, 02 May 2024 01:19:09 GMT
+<
+{
+  "app": {
+    "name": "spring-boot-actuator",
+    "description": "Event Managament Application",
+    "version": "1.0.0",
+    "author": "Martin",
+    "docs": "http://magadiflo.dev"
+  }
+}
+````

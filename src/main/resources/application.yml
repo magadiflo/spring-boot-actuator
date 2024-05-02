@@ -10,3 +10,14 @@ management:
   endpoint:
     health:
       show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: spring-boot-actuator
+    description: Event Managament Application
+    version: 1.0.0
+    author: Martin
+    docs: http://magadiflo.dev
