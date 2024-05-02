@@ -1,3 +1,9 @@
 spring:
   application:
     name: spring-boot-actuator
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, beans

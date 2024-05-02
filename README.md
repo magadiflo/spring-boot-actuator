@@ -44,7 +44,7 @@ aplicación, como el estado de la aplicación, métricas, sesiones, etc.
 El módulo `spring-boot-actuator` proporciona todas las funciones listas para producción de `Spring Boot`. La
 forma recomendada de habilitar las funciones es agregar la dependencia del `"Starter"` `spring-boot-starter-actuator`.
 
-## Endpoints
+## [Endpoints](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html?query=health%27%20target=_blank%3E%3Cb%3Ehealth%3C/b%3E%3C/a%3E-groups)
 
 Los puntos finales del actuador le permiten monitorear e interactuar con su aplicación. Spring Boot incluye varios
 puntos finales integrados y le permite agregar los suyos propios. Por ejemplo, el punto final de estado proporciona
@@ -55,6 +55,15 @@ de HTTP o JMX. Se considera que un punto final está disponible cuando está hab
 integrados se configuran automáticamente solo cuando están disponibles. La mayoría de las aplicaciones eligen la
 exposición en lugar de HTTP, donde el ID del punto final y el prefijo `/actuador` se asignan a una URL. Por ejemplo, de
 forma predeterminada, el punto final de salud se asigna a `/actuator/health`.
+
+Están disponibles los siguientes puntos de conexión independientes de la tecnología:
+
+- `beans`, muestra una lista completa de todos los frijoles de primavera de la aplicación.
+- `info`, muestra información arbitraria de la aplicación.
+- `logfile`, devuelve el contenido del archivo de registro (si se ha establecido la propiedad `logging.file.name`
+  o `logging.file.path`). Admite el uso del encabezado de rango HTTP para recuperar parte del contenido del archivo de
+  registro.
+- etc..
 
 ## Ejecutando aplicación
 
@@ -126,5 +135,137 @@ $ curl -v http://localhost:8080/actuator/health | jq
 <
 {
   "status": "UP"
+}
+````
+
+## Habilitando algunos endpoints
+
+Por defecto, `Spring Boot Actuator` nos muestra 3 endpoints habilitados, tal como se ve en el apartado superior:
+
+````bash
+http://localhost:8080/actuator
+http://localhost:8080/actuator/health
+http://localhost:8080/actuator/health/{*path}
+````
+
+Ahora, nosotros habilitaremos algunos endpoints adicionales para obtener información que nos interesa.
+
+````yaml
+spring:
+  application:
+    name: spring-boot-actuator
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, beans
+````
+
+Accediendo al endpoint de `/actuator` vemos que ahora nos muestra el endpoint `/bean` configurado:
+
+````bash
+$ curl -v http://localhost:8080/actuator | jq
+>
+< HTTP/1.1 200
+< Content-Type: application/vnd.spring-boot.actuator.v3+json
+< Transfer-Encoding: chunked
+< Date: Thu, 02 May 2024 00:59:08 GMT
+<
+{
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/actuator",
+      "templated": false
+    },
+    "beans": {
+      "href": "http://localhost:8080/actuator/beans",
+      "templated": false
+    },
+    "health": {
+      "href": "http://localhost:8080/actuator/health",
+      "templated": false
+    },
+    "health-path": {
+      "href": "http://localhost:8080/actuator/health/{*path}",
+      "templated": true
+    }
+  }
+}
+````
+
+## Viendo todos los Beans definidos en el Contexto de la aplicación
+
+````bash
+$ curl -v http://localhost:8080/actuator/beans | jq
+>
+< HTTP/1.1 200
+< Content-Type: application/vnd.spring-boot.actuator.v3+json
+< Transfer-Encoding: chunked
+< Date: Thu, 02 May 2024 01:02:40 GMT
+{
+    "contexts": {
+        "spring-boot-actuator": {
+            "beans": {
+                "endpointCachingOperationInvokerAdvisor": {
+                    "aliases": [],
+                    "scope": "singleton",
+                    "type": "org.springframework.boot.actuate.endpoint.invoker.cache.CachingOperationInvokerAdvisor",
+                    "resource": "class path resource [org/springframework/boot/actuate/autoconfigure/endpoint/EndpointAutoConfiguration.class]",
+                    "dependencies": [
+                        "org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration",
+                        "environment"
+                    ]
+                },
+                "defaultServletHandlerMapping": {
+                    "aliases": [],
+                    "scope": "singleton",
+                    "type": "org.springframework.web.servlet.HandlerMapping",
+                    "resource": "class path resource [org/springframework/boot/autoconfigure/web/servlet/WebMvcAutoConfiguration$EnableWebMvcConfiguration.class]",
+                    "dependencies": [
+                        "org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration$EnableWebMvcConfiguration"
+                    ]
+                },
+                "applicationTaskExecutor": {
+                    "aliases": [
+                        "taskExecutor"
+                    ],
+                    "scope": "singleton",
+                    "type": "org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor",
+                    "resource": "class path resource [org/springframework/boot/autoconfigure/task/TaskExecutorConfigurations$TaskExecutorConfiguration.class]",
+                    "dependencies": [
+                        "org.springframework.boot.autoconfigure.task.TaskExecutorConfigurations$TaskExecutorConfiguration",
+                        "taskExecutorBuilder"
+                    ]
+                },
+                {...}
+                "httpMessageConvertersRestClientCustomizer": {
+                    "aliases": [],
+                    "scope": "singleton",
+                    "type": "org.springframework.boot.autoconfigure.web.client.HttpMessageConvertersRestClientCustomizer",
+                    "resource": "class path resource [org/springframework/boot/autoconfigure/web/client/RestClientAutoConfiguration.class]",
+                    "dependencies": [
+                        "org.springframework.boot.autoconfigure.web.client.RestClientAutoConfiguration"
+                    ]
+                },
+                "taskExecutorBuilder": {
+                    "aliases": [],
+                    "scope": "singleton",
+                    "type": "org.springframework.boot.task.TaskExecutorBuilder",
+                    "resource": "class path resource [org/springframework/boot/autoconfigure/task/TaskExecutorConfigurations$TaskExecutorBuilderConfiguration.class]",
+                    "dependencies": [
+                        "org.springframework.boot.autoconfigure.task.TaskExecutorConfigurations$TaskExecutorBuilderConfiguration",
+                        "spring.task.execution-org.springframework.boot.autoconfigure.task.TaskExecutionProperties"
+                    ]
+                },
+                "org.springframework.boot.actuate.autoconfigure.endpoint.jackson.JacksonEndpointAutoConfiguration": {
+                    "aliases": [],
+                    "scope": "singleton",
+                    "type": "org.springframework.boot.actuate.autoconfigure.endpoint.jackson.JacksonEndpointAutoConfiguration",
+                    "dependencies": []
+                }
+            }
+        }
+    }
 }
 ````
