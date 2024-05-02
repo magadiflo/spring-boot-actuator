@@ -269,3 +269,155 @@ $ curl -v http://localhost:8080/actuator/beans | jq
     }
 }
 ````
+
+## Habilitando todos los endpoints
+
+En lugar de estar definiendo los endpoints, podemos habilitar todos los endpoints de una vez colocando el `*`:
+
+````yaml
+# Another property
+#
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+````
+
+Ahora accedemos al endpoint y vemos que estarán habilitados todos los endpoints:
+
+````bash
+$ curl -v http://localhost:8080/actuator | jq
+>
+< HTTP/1.1 200
+< Content-Type: application/vnd.spring-boot.actuator.v3+json
+< Transfer-Encoding: chunked
+< Date: Thu, 02 May 2024 01:09:53 GMT
+<
+{
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/actuator",
+      "templated": false
+    },
+    "beans": {
+      "href": "http://localhost:8080/actuator/beans",
+      "templated": false
+    },
+    "caches-cache": {
+      "href": "http://localhost:8080/actuator/caches/{cache}",
+      "templated": true
+    },
+    "caches": {
+      "href": "http://localhost:8080/actuator/caches",
+      "templated": false
+    },
+    "health": {
+      "href": "http://localhost:8080/actuator/health",
+      "templated": false
+    },
+    "health-path": {
+      "href": "http://localhost:8080/actuator/health/{*path}",
+      "templated": true
+    },
+    "info": {
+      "href": "http://localhost:8080/actuator/info",
+      "templated": false
+    },
+    "conditions": {
+      "href": "http://localhost:8080/actuator/conditions",
+      "templated": false
+    },
+    "configprops": {
+      "href": "http://localhost:8080/actuator/configprops",
+      "templated": false
+    },
+    "configprops-prefix": {
+      "href": "http://localhost:8080/actuator/configprops/{prefix}",
+      "templated": true
+    },
+    "env": {
+      "href": "http://localhost:8080/actuator/env",
+      "templated": false
+    },
+    "env-toMatch": {
+      "href": "http://localhost:8080/actuator/env/{toMatch}",
+      "templated": true
+    },
+    "loggers-name": {
+      "href": "http://localhost:8080/actuator/loggers/{name}",
+      "templated": true
+    },
+    "loggers": {
+      "href": "http://localhost:8080/actuator/loggers",
+      "templated": false
+    },
+    "heapdump": {
+      "href": "http://localhost:8080/actuator/heapdump",
+      "templated": false
+    },
+    "threaddump": {
+      "href": "http://localhost:8080/actuator/threaddump",
+      "templated": false
+    },
+    "metrics-requiredMetricName": {
+      "href": "http://localhost:8080/actuator/metrics/{requiredMetricName}",
+      "templated": true
+    },
+    "metrics": {
+      "href": "http://localhost:8080/actuator/metrics",
+      "templated": false
+    },
+    "scheduledtasks": {
+      "href": "http://localhost:8080/actuator/scheduledtasks",
+      "templated": false
+    },
+    "mappings": {
+      "href": "http://localhost:8080/actuator/mappings",
+      "templated": false
+    }
+  }
+}
+````
+
+## Viendo más detalles del path /health
+
+Tenemos que agregar la siguiente configuración para ver más detalles sobre el entpoint `/healt`:
+
+````yaml
+# another configuration
+#
+management:
+  # another configuration
+  #
+  endpoint:
+    health:
+      show-details: always
+````
+
+````bash
+$ curl -v http://localhost:8080/actuator/health | jq
+>
+< HTTP/1.1 200
+< Content-Type: application/vnd.spring-boot.actuator.v3+json
+< Transfer-Encoding: chunked
+< Date: Thu, 02 May 2024 01:13:31 GMT
+{
+  "status": "UP",
+  "components": {
+    "diskSpace": {
+      "status": "UP",
+      "details": {
+        "total": 240053645312,
+        "free": 97483169792,
+        "threshold": 10485760,
+        "path": "M:\\PROGRAMACION\\DESARROLLO_JAVA_SPRING\\02.youtube\\15.dan_vega\\spring-boot-actuator\\.",
+        "exists": true
+      }
+    },
+    "ping": {
+      "status": "UP"
+    }
+  }
+}
+````
