@@ -527,3 +527,50 @@ $  curl -v http://localhost:8080/actuator/info | jq
   }
 }
 ````
+
+## Viendo nuestros beans
+
+Crearemos un controlador, símplemente para ver que dicho controlador estará registrado como un bean. Esta información
+la podremos ver gracias al endpoint `/bean`
+
+````java
+
+@RestController
+public class HomeController {
+
+    @GetMapping
+    public String home() {
+        return "Hello, world";
+    }
+
+}
+````
+
+Ahora, ejecutamos la aplicación y accedemos al endpoint `/bean` para comprobar que allí está nuestro bean de
+controlador:
+
+````bash
+$ curl -v http://localhost:8080/actuator/beans | jq
+>
+< HTTP/1.1 200
+< Content-Type: application/vnd.spring-boot.actuator.v3+json
+< Transfer-Encoding: chunked
+< Date: Thu, 02 May 2024 01:02:40 GMT
+{
+    "contexts": {
+        "spring-boot-actuator": {
+            "beans": {
+              {...},
+                "homeController": {
+                    "aliases": [],
+                    "scope": "singleton",
+                    "type": "dev.magadiflo.actuator.app.HomeController",
+                    "resource": "file [M:\\PROGRAMACION\\DESARROLLO_JAVA_SPRING\\02.youtube\\15.dan_vega\\spring-boot-actuator\\target\\classes\\dev\\magadiflo\\actuator\\app\\HomeController.class]",
+                    "dependencies": []
+                },
+                {...}
+            }
+        }
+    }
+}
+````
